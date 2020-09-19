@@ -1,5 +1,6 @@
 package core.net;
 
+import config.ServerProperties;
 import core.service.HandleRequestService;
 import core.service.HandleResponseService;
 import core.service.Service;
@@ -16,9 +17,18 @@ import java.util.stream.Collectors;
  * @create 2020/9/18
  * 一个通用的抽象的上级服务器
  */
-public abstract class AlphaServer implements ServiceRegistrar {
+public abstract class AlphaServer implements ServiceRegistrar , NetWorker{
 
     protected int port;
+
+    protected String path;
+
+    public AlphaServer(ServerProperties serverProperties){
+        port=serverProperties.getPort();
+        this.path=serverProperties.getPath();
+    }
+
+
 
     protected List<Service> services=new ArrayList<>();
 
@@ -37,7 +47,12 @@ public abstract class AlphaServer implements ServiceRegistrar {
                 .collect(Collectors.toList());
     }
 
-
+    public void callService(Alpha alpha){
+        List<Service> serviceList=getServices(alpha);
+        for(Service service : serviceList){
+            service.run(alpha,this);
+        }
+    }
 
     public abstract void send(Alpha alpha);
 
