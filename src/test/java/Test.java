@@ -8,8 +8,11 @@ import core.net.netty.alpha.AlphaInHandler;
 import core.net.netty.alpha.AlphaOutHandler;
 import core.net.netty.http.WebSocketHttpAdapter;
 import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.cors.CorsConfigBuilder;
+import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.util.ArrayList;
@@ -28,15 +31,17 @@ public class Test {
 //        centerRepository.addAlphaRepository(alphaRepository);
 //        System.out.println(centerRepository.getAllAlphaRepository().get(0).toString());
         ServerProperties serverProperties = new ServerProperties();//配置
-
-//        ch.pipeline().addLast("http-codec",new HttpServerCodec());//设置解码器
-//        ch.pipeline().addLast("aggregator",new HttpObjectAggregator(65536));//聚合器，使用websocket会用到
-//        ch.pipeline().addLast("http-chunked",new ChunkedWriteHandler());//用于大数据的分区传输
+        CorsConfigBuilder corsConfigBuilder = CorsConfigBuilder.forAnyOrigin();
+        corsConfigBuilder.allowedRequestMethods(HttpMethod.GET, HttpMethod.CONNECT, HttpMethod.DELETE,
+                HttpMethod.OPTIONS, HttpMethod.PATCH, HttpMethod.POST, HttpMethod.TRACE)
+                .allowCredentials()
+                .maxAge(-1);
         List<ChannelHandler> channelHandlerList = new ArrayList<>();
 
         channelHandlerList.add(new FirstInHandler());
         channelHandlerList.add(new HttpServerCodec());
         channelHandlerList.add(new HttpObjectAggregator(65536));
+        channelHandlerList.add(new CorsHandler(corsConfigBuilder.build()));
         channelHandlerList.add(new ChunkedWriteHandler());
         channelHandlerList.add(new WebSocketHttpAdapter(serverProperties));
         channelHandlerList.add(new SimpleWebSocketHandler());
