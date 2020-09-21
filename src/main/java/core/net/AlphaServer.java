@@ -17,20 +17,20 @@ import java.util.stream.Collectors;
  * @create 2020/9/18
  * 一个通用的抽象的上级服务器
  */
-public abstract class AlphaServer implements ServiceRegistrar , NetWorker{
+public abstract class AlphaServer implements ServiceRegistrar, NetWorker {
 
     protected int port;
 
-    protected String path;
+    protected String ip;
 
-    public AlphaServer(ServerProperties serverProperties){
-        port=serverProperties.getPort();
-        this.path=serverProperties.getPath();
+
+    public AlphaServer(ServerProperties serverProperties) {
+        port = serverProperties.getPort();
+        this.ip = serverProperties.getIp();
     }
 
 
-
-    protected List<Service> services=new ArrayList<>();
+    protected List<Service> services = new ArrayList<>();
 
     protected List<Service> getServices(Alpha alpha){
         return services.stream()
@@ -47,12 +47,14 @@ public abstract class AlphaServer implements ServiceRegistrar , NetWorker{
                 .collect(Collectors.toList());
     }
 
-    public void callService(Alpha alpha){
-        List<Service> serviceList=getServices(alpha);
-        for(Service service : serviceList){
-            service.run(alpha,this);
+    public void callService(Alpha alpha) {
+        List<Service> serviceList = getServices(alpha);
+        for (Service service : serviceList) {
+            service.run(alpha, this);
         }
     }
+
+    public abstract void start();
 
     public abstract void send(Alpha alpha);
 

@@ -1,8 +1,10 @@
 package core.net.netty.WebSocket;
 
 import config.ServerProperties;
+import core.net.netty.BaseInHandler;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -10,50 +12,21 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 /**
  * @author 杨能
  * @create 2020/9/19
+ * Http握手就会升级为WebSocket协议
  */
-public abstract class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
-    protected int port;
-    protected String path;
-    protected String ip;
-    public WebSocketHandler(int port , String path , String ip){
-        this.setPath(path);
-        this.setPort(port);
-        this.setIp(ip);
+public abstract class WebSocketHandler extends ChannelDuplexHandler {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof WebSocketFrame) {
+            //开始websocket通讯
+            handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
+        }
     }
 
-    public WebSocketHandler(ServerProperties serverProperties){
-        this(serverProperties.getPort(),serverProperties.getPath(),serverProperties.getIp());
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        ctx.fireChannelRead(msg);
     }
 
-    public WebSocketHandler(int port , String path){
-       this(port,path,"127.0.0.1");
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    protected abstract void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req);
     protected abstract void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame);
-    protected abstract void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res);
 }
