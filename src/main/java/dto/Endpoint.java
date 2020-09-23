@@ -1,4 +1,4 @@
 package dto;
 
-public abstract class Endpoint {
+public class Endpoint {
 }

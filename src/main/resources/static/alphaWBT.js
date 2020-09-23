@@ -24,8 +24,7 @@ var WBT = function (config) {
     });
     //自定义Ws消息接收函数：服务器向前端推送消息时触发
     this.onmessage = ((e) => {
-
-
+        console.log("接收到消息:", e);
     });
     //自定义Ws异常事件：Ws报错后触发
     this.onerror = ((e) => {
@@ -54,6 +53,7 @@ WBT.prototype.initWs = function () {
         that.onopen(e);
     };
     this.socket.onmessage = function (e) {
+
         that.onmessage(e);
     };
     this.socket.onclose = function (e) {

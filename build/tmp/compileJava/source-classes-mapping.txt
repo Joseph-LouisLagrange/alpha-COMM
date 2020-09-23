@@ -6,18 +6,20 @@ dao/SimpleAlphaRepository.java
  dao.SimpleAlphaRepository
 dto/Endpoint.java
  dto.Endpoint
-core/net/netty/http/WebSocketHttpAdapter.java
- core.net.netty.http.WebSocketHttpAdapter
 core/net/netty/alpha/AlphaInHandler.java
  core.net.netty.alpha.AlphaInHandler
 dto/dut/StringDataUnit.java
  dto.dut.StringDataUnit
 core/net/AlphaServer.java
  core.net.AlphaServer
+core/net/netty/http/SimpleHttpInHandler.java
+ core.net.netty.http.SimpleHttpInHandler
 core/service/DayinService.java
  core.service.DayinService
 aop/SimpleAop.java
  aop.SimpleAop
+core/net/netty/WebSocket/SimpleWebSocketOutHandler.java
+ core.net.netty.WebSocket.SimpleWebSocketOutHandler
 dto/dut/FileDataUnit.java
  dto.dut.FileDataUnit
 core/net/netty/AlphaChatHandler.java
@@ -26,14 +28,12 @@ dto/Body.java
  dto.Body
 dto/dut/HtmlDataUnit.java
  dto.dut.HtmlDataUnit
-core/net/netty/WebSocket/SimpleWebSocketHandler.java
- core.net.netty.WebSocket.SimpleWebSocketHandler
-core/net/netty/WebSocket/WebSocketHandler.java
- core.net.netty.WebSocket.WebSocketHandler
 dto/PersonEndPoint.java
  dto.PersonEndPoint
 dto/Action.java
  dto.Action
+core/net/netty/WebSocket/SimpleWebSocketInHandler.java
+ core.net.netty.WebSocket.SimpleWebSocketInHandler
 core/service/internal/SimpleSendMessageService.java
  core.service.internal.SimpleSendMessageService
 dto/GroupEndPoint.java
@@ -44,16 +44,16 @@ dto/ServerEndPoint.java
  dto.ServerEndPoint
 core/net/netty/BaseInHandler.java
  core.net.netty.BaseInHandler
+core/net/netty/WebSocket/WebSocketInHandler.java
+ core.net.netty.WebSocket.WebSocketInHandler
 dao/SimpleCenterRepository.java
  dao.SimpleCenterRepository
 core/net/socket/SocketAlphaServer.java
  core.net.socket.SocketAlphaServer
-core/net/netty/http/HttpOutHandler.java
- core.net.netty.http.HttpOutHandler
+core/net/netty/http/HttpWebSocketAdapter.java
+ core.net.netty.http.HttpWebSocketAdapter
 dao/FastAlphaRepositoryFactory.java
  dao.FastAlphaRepositoryFactory
-core/net/netty/http/CORSHttpOutHandler.java
- core.net.netty.http.CORSHttpOutHandler
 config/ServerProperties.java
  config.ServerProperties
  config.ServerProperties$NettyProperties
@@ -61,6 +61,8 @@ core/net/netty/AlphaChatChannelInitializer.java
  core.net.netty.AlphaChatChannelInitializer
 core/net/netty/BaseOutHandler.java
  core.net.netty.BaseOutHandler
+core/net/netty/alpha/AlphaCenter.java
+ core.net.netty.alpha.AlphaCenter
 core/net/ServiceRegistrar.java
  core.net.ServiceRegistrar
 core/service/WebSocketService.java
@@ -75,6 +77,8 @@ core/service/HandleRequestService.java
  core.service.HandleRequestService
 core/service/Service.java
  core.service.Service
+dto/BaseProtocol.java
+ dto.BaseProtocol
 aop/AopTest.java
  aop.AopTest
 core/service/HandleResponseService.java
@@ -102,6 +106,8 @@ dto/dut/ImageDataUnit.java
  dto.dut.ImageDataUnit
 core/net/NetWorker.java
  core.net.NetWorker
+core/net/netty/http/SimpleHttpOutHandler.java
+ core.net.netty.http.SimpleHttpOutHandler
 dto/fast/BodyBuilder.java
  dto.fast.BodyBuilder
 core/net/netty/EndOutHandler.java

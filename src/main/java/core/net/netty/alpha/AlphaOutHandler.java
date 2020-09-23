@@ -14,14 +14,15 @@ import io.netty.util.CharsetUtil;
  * @create 2020/9/21
  */
 public class AlphaOutHandler extends BaseOutHandler {
-
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (msg instanceof Alpha) {
             //JSON化
             Gson gson = new Gson();
             String jsonString = gson.toJson(msg);
-            ctx.fireChannelRead(jsonString);//传递给网络协议栈
+            super.write(ctx, jsonString, promise);
+        } else {
+            super.write(ctx, msg, promise);
         }
     }
 }

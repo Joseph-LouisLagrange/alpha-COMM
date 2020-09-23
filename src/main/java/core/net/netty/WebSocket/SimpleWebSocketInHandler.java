@@ -11,13 +11,13 @@ import io.netty.util.CharsetUtil;
  * @create 2020/9/19
  */
 @ChannelHandler.Sharable
-public class SimpleWebSocketHandler extends WebSocketHandler {
-
+public class SimpleWebSocketInHandler extends WebSocketInHandler {
 
     @Override
-    protected void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame){
+    protected void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         // 判断是否关闭链路的指令
         if (frame instanceof CloseWebSocketFrame) {
+            //System.out.println("webSocket 关闭");
             ctx.close();//那我也关闭了
             return;
         }
@@ -33,16 +33,15 @@ public class SimpleWebSocketHandler extends WebSocketHandler {
         //二进制数据包
         if(frame instanceof BinaryWebSocketFrame){
             BinaryWebSocketFrame webSocketFrame = (BinaryWebSocketFrame) frame;
-            System.out.println("BinaryWebSocketFrame:" + frame.content().toString(CharsetUtil.UTF_8));
+            //System.out.println("BinaryWebSocketFrame:" + frame.content().toString(CharsetUtil.UTF_8));
         }
         //数据包的结束位出现
         if (frame.isFinalFragment()) {
-            System.out.println("最后一个桢到了:" + frame);
+            //System.out.println("最后一个桢到了:" + frame);
         }
         //文本类数据包
         if (frame instanceof TextWebSocketFrame) {
-            System.out.println("收到：" + ((TextWebSocketFrame) frame).text());
-            //提取出内容传递下去
+            //提取出内容传递下去(拆包)
             ctx.fireChannelRead(((TextWebSocketFrame) frame).text());
         }
     }

@@ -1,6 +1,7 @@
 package dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Alpha {
     long id;
@@ -8,16 +9,18 @@ public class Alpha {
     Endpoint to;
     DataType dataType;
     Action action;
-    LocalDate date;
+    LocalDateTime date;
+    BaseProtocol baseProtocol;
     Body body;
 
-    public Alpha(long id, Endpoint from, Endpoint to, DataType dataType, Action action, Body body) {
+    public Alpha(long id, Endpoint from, Endpoint to, DataType dataType, Action action, BaseProtocol baseProtocol, Body body) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.dataType = dataType;
         this.action = action;
-        this.date = LocalDate.now();
+        this.date = LocalDateTime.now();
+        this.baseProtocol = baseProtocol;
         this.body = body;
     }
 
@@ -61,11 +64,11 @@ public class Alpha {
         this.action = action;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -75,5 +78,13 @@ public class Alpha {
 
     public void setBody(Body body) {
         this.body = body;
+    }
+
+    public BaseProtocol getBaseProtocol() {
+        return baseProtocol;
+    }
+
+    public void setBaseProtocol(BaseProtocol baseProtocol) {
+        this.baseProtocol = baseProtocol;
     }
 }

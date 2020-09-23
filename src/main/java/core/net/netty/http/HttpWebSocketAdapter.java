@@ -3,55 +3,51 @@ package core.net.netty.http;
 import config.ServerProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 
 import static io.netty.handler.codec.http.HttpUtil.isKeepAlive;
 
 /**
  * @author 杨能
  * @create 2020/9/21
- * 把HTTP转向WebSocket的过程
+ * 把HTTP转向WebSocket的类，把Http适配为WebSocket协议
  */
-public class WebSocketHttpAdapter extends HttpOutHandler {
+public class HttpWebSocketAdapter extends SimpleChannelInboundHandler<Object> {
 
     private final String ip;
     private final int port;
     private final String path;
 
-    public WebSocketHttpAdapter(String ip, int port, String path) {
+    public HttpWebSocketAdapter(String ip, int port, String path) {
         this.ip = ip;
         this.port = port;
         this.path = path;
     }
 
-    public WebSocketHttpAdapter(ServerProperties serverProperties) {
+    public HttpWebSocketAdapter(ServerProperties serverProperties) {
         this(serverProperties.getIp(), serverProperties.getPort(), serverProperties.getWebSocketPath());
     }
 
     //HTTP握手，这是WebSocket开始的预兆
     private WebSocketServerHandshaker handshaker;
 
-    @Override
-    protected void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
-        //要求Upgrade为websocket，过滤掉get/Post
-        if (!req.decoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
-            //若不是websocket方式，则创建BAD_REQUEST的req，返回给客户端
-            sendHttpResponse(ctx, req, new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
-            return;
-        }
-
+    /**
+     * 把http协议适配为Websocket协议
+     *
+     * @param ctx ChannelHandlerContext
+     * @param req FullHttpRequest
+     */
+    protected void httpToWebSocket(ChannelHandlerContext ctx, FullHttpRequest req) {
+        String webSocketURL = "ws://" + ip + ":" + port + path;
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                "ws://" + ip + ":" + port + path, null, false, 65536);
+                webSocketURL, null, false, 65536);
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory
@@ -77,5 +73,18 @@ public class WebSocketHttpAdapter extends HttpOutHandler {
         if (!isKeepAlive(req) || res.status().code() != 200) {
             f.addListener(ChannelFutureListener.CLOSE);
         }
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof FullHttpRequest
+                && ((FullHttpRequest) msg).decoderResult().isSuccess()
+                && "websocket".equals(((FullHttpRequest) msg).headers().get("Upgrade"))) {
+            httpToWebSocket(ctx, (FullHttpRequest) msg);//开始协议适配
+            return;
+        }
+        //直接传递到下级
+        ReferenceCountUtil.retain(msg);
+        ctx.fireChannelRead(msg);//传递下级
     }
 }
