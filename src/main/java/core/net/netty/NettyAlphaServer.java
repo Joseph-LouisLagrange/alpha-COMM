@@ -3,7 +3,7 @@ package core.net.netty;
 import config.ServerProperties;
 import core.net.AlphaServer;
 import dto.Alpha;
-import dto.Endpoint;
+import dto.endpoint.Endpoint;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

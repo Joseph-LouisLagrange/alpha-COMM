@@ -8,19 +8,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class Body {
-    List<DataUnit<?>> dataUnitList=new ArrayList<>();
-    public Body(Collection<DataUnit<?>> collection){
+    List<DataUnit> dataUnitList = new ArrayList<>();
+
+    public Body(Collection<DataUnit> collection) {
         dataUnitList.addAll(collection);
     }
 
-    public Body(DataUnit<?>[] dataUnits){
-        Collections.addAll(dataUnitList,dataUnits);
+    public Body(DataUnit[] dataUnits) {
+        Collections.addAll(dataUnitList, dataUnits);
     }
-    public Body(){
+
+    public Body() {
 
     }
 
-    public void addDataUnit(DataUnit<?> dataUnit){
+    public void addDataUnit(DataUnit dataUnit) {
         this.dataUnitList.add(dataUnit);
+    }
+
+    public List<DataUnit> getDataUnitList() {
+        return dataUnitList;
     }
 }

@@ -8,12 +8,12 @@ import dto.dut.DataUnit;
  * @create 2020/9/18
  */
 public class BodyBuilder {
-    private Body body;
+    private Body body = null;
     public BodyBuilder(){
         this.body=new Body();
     }
 
-    public BodyBuilder add(DataUnit<?> dataUnit){
+    public BodyBuilder add(DataUnit dataUnit) {
         this.body.addDataUnit(dataUnit);
         return this;
     }

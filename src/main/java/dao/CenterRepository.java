@@ -1,6 +1,6 @@
 package dao;
 
-import dto.Endpoint;
+import dto.endpoint.Endpoint;
 
 import java.util.List;
 

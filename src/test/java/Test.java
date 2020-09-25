@@ -1,26 +1,15 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import config.ServerProperties;
-import core.net.netty.EndOutHandler;
-import core.net.netty.FirstInHandler;
 import core.net.netty.NettyAlphaServer;
 
-import core.net.netty.WebSocket.SimpleWebSocketInHandler;
 import core.net.netty.AlphaChatChannelInitializer;
-import core.net.netty.WebSocket.SimpleWebSocketOutHandler;
-import core.net.netty.alpha.AlphaCenter;
-import core.net.netty.alpha.AlphaInHandler;
-import core.net.netty.http.HttpWebSocketAdapter;
-import core.net.netty.http.SimpleHttpInHandler;
-import core.net.netty.http.SimpleHttpOutHandler;
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.cors.CorsConfigBuilder;
-import io.netty.handler.codec.http.cors.CorsHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
-
-import java.util.ArrayList;
-import java.util.List;
+import dto.*;
+import dto.dut.*;
+import dto.endpoint.Endpoint;
+import dto.endpoint.SimpleServerEndpoint;
+import dto.endpoint.SimpleUserEndpoint;
+import dto.json.DefaultAdapter;
 
 /**
  * @author 杨能
@@ -37,6 +26,20 @@ public class Test {
         ServerProperties serverProperties = new ServerProperties();//配置
         AlphaChatChannelInitializer nettyChannelInitializer = new AlphaChatChannelInitializer();//中间件
         NettyAlphaServer nettyAlphaServer = new NettyAlphaServer(serverProperties, nettyChannelInitializer);//创建服务器
-        nettyAlphaServer.start();//开启服务器
+        //nettyAlphaServer.start();//开启服务器
+        Body body = new Body();
+        body.addDataUnit(new SimpleTextDataUnit("你好棒"));
+        body.addDataUnit(new HtmlTextDataUnit("<h1>标题</h1>"));
+        body.addDataUnit(new FileDataUnit(null, ContentType.APPLICATION_JSON, null));
+        Alpha alpha = new Alpha(1L, new SimpleUserEndpoint("用户名", "密码"), new SimpleServerEndpoint(),
+                DataType.REQUEST, Action.JOIN_GROUP, BaseProtocol.HTTP, body);
+        Gson gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(DataUnit.class, new DefaultAdapter<DataUnit>())
+                .registerTypeHierarchyAdapter(Endpoint.class, new DefaultAdapter<Endpoint>())
+                .create();
+        System.out.println(alpha.getFrom());
+        String json = gson.toJson(alpha);
+        Alpha alpha1 = gson.fromJson(json, Alpha.class);
+        System.out.println(alpha1.getFrom().getTypeKey());
     }
 }

@@ -1,10 +1,11 @@
 package dto;
 
-import java.time.LocalDate;
+import dto.endpoint.Endpoint;
+
 import java.time.LocalDateTime;
 
 public class Alpha {
-    long id;
+    Long id;
     Endpoint from;
     Endpoint to;
     DataType dataType;
@@ -13,7 +14,7 @@ public class Alpha {
     BaseProtocol baseProtocol;
     Body body;
 
-    public Alpha(long id, Endpoint from, Endpoint to, DataType dataType, Action action, BaseProtocol baseProtocol, Body body) {
+    public Alpha(Long id, Endpoint from, Endpoint to, DataType dataType, Action action, BaseProtocol baseProtocol, Body body) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -24,11 +25,14 @@ public class Alpha {
         this.body = body;
     }
 
-    public long getId() {
+    public Alpha() {
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -86,5 +90,19 @@ public class Alpha {
 
     public void setBaseProtocol(BaseProtocol baseProtocol) {
         this.baseProtocol = baseProtocol;
+    }
+
+    @Override
+    public String toString() {
+        return "Alpha{" +
+                "id=" + id +
+                ", from=" + from +
+                ", to=" + to +
+                ", dataType=" + dataType +
+                ", action=" + action +
+                ", date=" + date +
+                ", baseProtocol=" + baseProtocol +
+                ", body=" + body +
+                '}';
     }
 }

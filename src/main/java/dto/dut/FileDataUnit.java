@@ -1,14 +1,20 @@
 package dto.dut;
 
-import dto.dut.DataUnit;
-
 import java.io.InputStream;
 
-public class FileDataUnit extends DataUnit<InputStream> {
-    private String fileName;
-    protected transient InputStream content;
+public class FileDataUnit extends DataUnit {
 
-    public FileDataUnit() {
-        super.contentType = "FILE";
+    private transient InputStream inputStream = null;
+
+    FileAttributes fileAttributes;
+
+    public FileDataUnit(FileAttributes fileAttributes, ContentType contentType, InputStream inputStream) {
+        this.contentType = contentType;
+        this.fileAttributes = fileAttributes;
+        this.inputStream = inputStream;
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
     }
 }

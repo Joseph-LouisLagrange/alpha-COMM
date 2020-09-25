@@ -3,7 +3,7 @@ package dao;
 import dto.Action;
 import dto.Alpha;
 import dto.DataType;
-import dto.Endpoint;
+import dto.endpoint.Endpoint;
 
 import java.util.List;
 

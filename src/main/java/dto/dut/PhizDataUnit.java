@@ -2,14 +2,20 @@ package dto.dut;
 
 import dto.dut.DataUnit;
 
-public class PhizDataUnit extends DataUnit<Character> {
-    public static final String PHIZ_TYPE="PHIZ";
-    public PhizDataUnit(char email){
-        this.contentType=PHIZ_TYPE;
-        this.content=email;
+public class PhizDataUnit extends DataUnit {
+
+    private Character emailCode = null;
+
+    public PhizDataUnit(Character emailCode) {
+        this.emailCode = emailCode;
+        this.contentType = ContentType.PHIZ;
     }
 
-    public PhizDataUnit(int code){
-        this.content=(char)code;
+    public Character getEmailCode() {
+        return emailCode;
+    }
+
+    public void setEmailCode(Character emailCode) {
+        this.emailCode = emailCode;
     }
 }

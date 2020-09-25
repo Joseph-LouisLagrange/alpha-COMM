@@ -1,2 +1,4 @@
+MyTypeAdapterFactory.java
+ MyTypeAdapterFactory
 Test.java
  Test

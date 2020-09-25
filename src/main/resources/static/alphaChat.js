@@ -65,14 +65,14 @@ function toAlpha(messageObject) {
 function send() {
     let alpha = new Alpha(1, new Endpoint(), new Endpoint(),
         REQUEST_TYPE, SEND_MESSAGE, HTTP_PROTOCOl, new StringDataUnit("123456789"));
-    //ajaxAlpha.send(JSON.stringify(alpha));
+    ajaxAlpha.send(JSON.stringify(alpha));
     //获取文件,虚拟表单技术
     let formEl = document.getElementById("mainForm");
     console.info(formEl);
     let formData = new FormData(formEl);
     formData.append("name1", "value1")
     console.info(formData.get("file"));
-    ajaxAlpha.send(formData);
+    //ajaxAlpha.send(formData);
     // alpha.baseProtocol=WEBSOCKET_PROTOCOL;
     // wbt.sendAlpha(JSON.stringify(alpha));
 }

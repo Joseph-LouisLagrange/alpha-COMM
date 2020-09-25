@@ -1,22 +1,22 @@
 package dto.dut;
 
-public abstract class DataUnit<T> {
-    protected String contentType;
-    protected T content;
 
-    public String getContentType() {
+import dto.json.TypeKey;
+
+import java.io.Serializable;
+
+public abstract class DataUnit implements Serializable, TypeKey {
+    protected ContentType contentType;
+
+    public String getTypeKey() {
+        return this.getClass().getTypeName();
+    }
+
+    public ContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(ContentType contentType) {
         this.contentType = contentType;
-    }
-
-    public T getContent() {
-        return content;
-    }
-
-    public void setContent(T content) {
-        this.content = content;
     }
 }
