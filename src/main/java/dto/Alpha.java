@@ -4,7 +4,7 @@ import dto.endpoint.Endpoint;
 
 import java.time.LocalDateTime;
 
-public class Alpha {
+public class Alpha implements Cloneable {
     Long id;
     Endpoint from;
     Endpoint to;
@@ -104,5 +104,15 @@ public class Alpha {
                 ", baseProtocol=" + baseProtocol +
                 ", body=" + body +
                 '}';
+    }
+
+    @Override
+    public Alpha clone() {
+        try {
+            return (Alpha) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

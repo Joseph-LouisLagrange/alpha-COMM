@@ -14,15 +14,21 @@ import io.netty.util.CharsetUtil;
  * @create 2020/9/21
  */
 public class AlphaOutHandler extends BaseOutHandler {
+
+    private Gson gson;
+
+    public AlphaOutHandler(Gson gson) {
+        this.gson = gson;
+    }
+
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (msg instanceof Alpha) {
-            //JSON化
-            Gson gson = new Gson();
+            //JSON
             String jsonString = gson.toJson(msg);
-            super.write(ctx, jsonString, promise);
-        } else {
-            super.write(ctx, msg, promise);
+            ctx.writeAndFlush(jsonString);
+            return;
         }
+        ctx.writeAndFlush(msg);
     }
 }

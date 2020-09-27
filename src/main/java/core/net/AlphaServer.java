@@ -1,13 +1,15 @@
 package core.net;
 
 import config.ServerProperties;
-import core.service.HandleRequestService;
-import core.service.HandleResponseService;
-import core.service.Service;
+import service.HandleRequestService;
+import service.HandleResponseService;
+import service.Service;
 import dto.Alpha;
 import dto.DataType;
+import dto.json.AlphaJsonConverter;
 import tool.ReflectUtil;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,28 +19,33 @@ import java.util.stream.Collectors;
  * @create 2020/9/18
  * 一个通用的抽象的上级服务器
  */
-public abstract class AlphaServer implements ServiceRegistrar, NetWorker {
+public abstract class AlphaServer implements Registrar, AlphaNetWorker {
 
     protected int port;
 
     protected String ip;
 
+    protected AlphaJsonConverter alphaJsonConverter;
 
-    public AlphaServer(ServerProperties serverProperties) {
+    public static Charset charset;
+
+    public AlphaServer(ServerProperties serverProperties, AlphaJsonConverter alphaJsonConverter) {
         port = serverProperties.getPort();
         this.ip = serverProperties.getIp();
+        this.alphaJsonConverter = alphaJsonConverter;
+        charset = serverProperties.getCharset();
     }
-
 
     protected List<Service> services = new ArrayList<>();
 
-    protected List<Service> getServices(Alpha alpha){
+
+    protected List<Service> getServices(Alpha alpha) {
         return services.stream()
                 .filter(service -> {
-                    if(ReflectUtil.isExtendClass(service.getClass(),HandleRequestService.class)){
+                    if (ReflectUtil.isExtendClass(service.getClass(), HandleRequestService.class)) {
                         return alpha.getDataType().equals(DataType.REQUEST);
                     }
-                    if(ReflectUtil.isExtendClass(service.getClass(), HandleResponseService.class)){
+                    if (ReflectUtil.isExtendClass(service.getClass(), HandleResponseService.class)) {
                         return alpha.getDataType().equals(DataType.RESPONSE);
                     }
                     return true;
@@ -56,10 +63,22 @@ public abstract class AlphaServer implements ServiceRegistrar, NetWorker {
 
     public abstract void start();
 
-    public abstract void send(Alpha alpha);
 
     @Override
-    public void register(Service service) {
+    public void registerAlphaJsonConverter(AlphaJsonConverter alphaJsonConverter) {
+        this.alphaJsonConverter = alphaJsonConverter;
+    }
+
+    @Override
+    public void registerService(Service service) {
         services.add(service);
+    }
+
+    public AlphaJsonConverter getAlphaJsonConverter() {
+        return alphaJsonConverter;
+    }
+
+    public void setAlphaJsonConverter(AlphaJsonConverter alphaJsonConverter) {
+        this.alphaJsonConverter = alphaJsonConverter;
     }
 }

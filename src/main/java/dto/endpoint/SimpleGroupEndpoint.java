@@ -14,6 +14,9 @@ public class SimpleGroupEndpoint extends Endpoint {
         this.groupId = groupId;
     }
 
+    public SimpleGroupEndpoint() {
+    }
+
     @Override
     public boolean equals(Object obj) {
         return false;

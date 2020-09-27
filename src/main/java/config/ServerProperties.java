@@ -1,5 +1,9 @@
 package config;
 
+import io.netty.util.CharsetUtil;
+
+import java.nio.charset.Charset;
+
 /**
  * @author 杨能
  * @create 2020/9/19
@@ -13,6 +17,9 @@ public class ServerProperties {
     String httpPath = "/alpha";
     //ip地址
     String ip = "127.0.0.1";
+
+    //默认编码
+    String charset = CharsetUtil.UTF_8.name();
 
     NettyProperties nettyProperties = new NettyProperties();
 
@@ -84,6 +91,14 @@ public class ServerProperties {
 
     public void setHttpPath(String httpPath) {
         this.httpPath = httpPath;
+    }
+
+    public Charset getCharset() {
+        return Charset.forName(this.charset);
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 }
 

@@ -1,7 +1,6 @@
 package aop;
 
-import core.service.HandleRequestService;
-import core.service.Service;
+import service.HandleRequestService;
 import dto.Alpha;
 import dto.DataType;
 

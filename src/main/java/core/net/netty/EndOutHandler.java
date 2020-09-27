@@ -17,7 +17,7 @@ import io.netty.util.CharsetUtil;
 public class EndOutHandler extends BaseOutHandler {
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        System.out.println(this.getClass() + " write  " + msg);
+        //System.out.println(this.getClass() + " write  " + msg);
         ctx.writeAndFlush(msg);
     }
 }

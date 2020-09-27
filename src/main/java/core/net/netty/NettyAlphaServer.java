@@ -4,6 +4,7 @@ import config.ServerProperties;
 import core.net.AlphaServer;
 import dto.Alpha;
 import dto.endpoint.Endpoint;
+import dto.json.AlphaJsonConverter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,7 +12,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,19 +30,63 @@ public class NettyAlphaServer extends AlphaServer {
 
     protected AlphaChatChannelInitializer nettyChannelInitializer;
 
-    protected Map<Endpoint, Channel> channelMap = new ConcurrentHashMap<>();
+    /**
+     * 设计这类Map理由：
+     * 1.让 ConcurrentHashMap 对抗高并发，频繁的变化
+     * 2.  accessChannelMap 来存储已认证连接
+     */
+    //表示登陆了并且已经通过认证的channel
+    protected Map<Endpoint, Channel> accessChannelMap = new HashMap<>();
 
-    //这里可能会出现线程不安全(可以后面换成轻量级的HashTable)
-    protected Map<Endpoint, SocketChannel> socketChannelMap = new HashMap<>();
+    //双向map
+    protected Map<Channel, Endpoint> accessEndpointMap = new HashMap<>();
 
-    public NettyAlphaServer(ServerProperties serverProperties, AlphaChatChannelInitializer nettyChannelInitializer) {
-        super(serverProperties);
+    //表示已连接但是未认证的 channel
+    protected Map<Endpoint, Channel> activeChannelMap = new HashMap<>();
+    //表示已经激活连接的人
+    protected Set<Endpoint> activeEndpoints = new HashSet<>();
+
+    public NettyAlphaServer(ServerProperties serverProperties, AlphaJsonConverter alphaJsonConverter, AlphaChatChannelInitializer nettyChannelInitializer) {
+        super(serverProperties, alphaJsonConverter);
         bossThead = serverProperties.getBossThead();
         workThead = serverProperties.getWorkThead();
         this.nettyChannelInitializer = nettyChannelInitializer;
         //把自己的内核函数主动暴露出去
         this.nettyChannelInitializer.setNettyAlphaServer(this);
     }
+
+
+    public synchronized void active(Endpoint endpoint, Channel channel) {
+        this.activeEndpoints.add(endpoint);
+        activeChannelMap.put(endpoint, channel);
+    }
+
+    public boolean isActive(Endpoint endpoint) {
+        return this.activeEndpoints.contains(endpoint);
+    }
+
+    @Override
+    public void accessService(Endpoint endpoint) {
+        Channel channel = activeChannelMap.get(endpoint);
+        if (endpoint != null) {
+            //进去已认证表
+            accessChannelMap.put(endpoint, channel);
+            accessEndpointMap.put(channel, endpoint);
+        }
+    }
+
+    @Override
+    public void exit(Endpoint endpoint) {
+        Channel channel = accessChannelMap.get(endpoint);
+        accessEndpointMap.remove(channel);
+        accessChannelMap.remove(endpoint);
+    }
+
+
+    public Endpoint getEndpoint(Channel channel) {
+        return accessEndpointMap.get(channel);
+    }
+
 
     private void startNettyServer() {
         /* 主从线程组模型
@@ -63,16 +110,16 @@ public class NettyAlphaServer extends AlphaServer {
         }
     }
 
-
     @Override
     public void start() {
         startNettyServer();
     }
 
+    //转发数据包服务（数据重定向）
     @Override
     public void send(Alpha alpha) {
         //获取目标对象
         Endpoint target = alpha.getTo();
-        socketChannelMap.get(target).writeAndFlush(alpha);
+        activeChannelMap.get(target).writeAndFlush(alpha);
     }
 }

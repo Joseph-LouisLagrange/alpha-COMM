@@ -5,7 +5,7 @@ package dao;
  * @create 2020/9/19
  */
 public class FastAlphaRepositoryFactory implements AlphaRepositoryFactory {
-    private Class<? extends AlphaRepository> repositoryClass=SimpleAlphaRepository.class;
+    private Class<? extends AlphaRepository> repositoryClass = PrivateAlphaRepository.class;
 
     private static final FastAlphaRepositoryFactory fastAlphaRepositoryFactory=new FastAlphaRepositoryFactory();
 

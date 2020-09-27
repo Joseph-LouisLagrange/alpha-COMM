@@ -14,6 +14,7 @@ function AjaxAlpha(config) {
         // IE6, IE5 浏览器执行代码
         this.xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
+    this.xmlhttp.withCredentials = true;
     this.send = function (alpha) {
         this.xmlhttp.open(post, url, false);
         this.xmlhttp.send(alpha);

@@ -1,22 +1,26 @@
 package dto.dut;
 
 
-import dto.json.TypeKey;
+import dto.json.gson.TypeKey;
 
 import java.io.Serializable;
 
 public abstract class DataUnit implements Serializable, TypeKey {
-    protected ContentType contentType;
 
+    public DataUnit() {
+    }
+
+    ;
+
+    /**
+     * 建议子类重写为:
+     * public String getTypeKey() {
+     * return this.getClass().getSimpleName();
+     * }
+     *
+     * @return 当前类型的标识键
+     */
     public String getTypeKey() {
         return this.getClass().getTypeName();
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
     }
 }

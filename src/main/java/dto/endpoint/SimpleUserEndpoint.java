@@ -7,11 +7,13 @@ import java.util.Objects;
  */
 public class SimpleUserEndpoint extends Endpoint {
     private String userName;
-    private String password;
 
-    public SimpleUserEndpoint(String userName, String password) {
+    public SimpleUserEndpoint() {
+
+    }
+
+    public SimpleUserEndpoint(String userName) {
         this.userName = userName;
-        this.password = password;
     }
 
     @Override
@@ -19,13 +21,12 @@ public class SimpleUserEndpoint extends Endpoint {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimpleUserEndpoint that = (SimpleUserEndpoint) o;
-        return Objects.equals(userName, that.userName) &&
-                Objects.equals(password, that.password);
+        return Objects.equals(userName, that.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, password);
+        return Objects.hash(userName);
     }
 
 
@@ -37,13 +38,6 @@ public class SimpleUserEndpoint extends Endpoint {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public String getTypeKey() {

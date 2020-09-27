@@ -22,7 +22,7 @@ function Alpha(id, from, to, dataType, action, baseProtocol, body) {
 }
 
 function Body() {
-    this.dataUnitList = new Array(1);
+    this.dataUnitList = new Array(0);
     this.addDataUnit = function (dataUnit) {
         this.dataUnitList.push(dataUnit);
     }
@@ -33,21 +33,24 @@ function DataUnit(contentType, content) {
     this.content = content;
 }
 
-function StringDataUnit(content) {
-    this.contentType = "STRING";
+function SimpleTextDataUnit(content) {
+    this.type = "SimpleTextDataUnit";
     this.content = content;
 }
 
-StringDataUnit.prototype = DataUnit;
+
+function FileDataUnit(fileAttributes) {
+    this.type = "FileDataUnit";
+}
+
 
 function Endpoint() {
 
 }
 
-function PersonEndPoint(userName, password) {
-    this.prototype = Endpoint;
-    this.username;
-    this.password = password;
+function SimpleUserEndpoint(userName) {
+    this.type = "SimpleUserEndpoint";
+    this.userName = userName;
 }
 
 function ServerEndPoint() {
@@ -63,16 +66,19 @@ function toAlpha(messageObject) {
 }
 
 function send() {
-    let alpha = new Alpha(1, new Endpoint(), new Endpoint(),
-        REQUEST_TYPE, SEND_MESSAGE, HTTP_PROTOCOl, new StringDataUnit("123456789"));
-    ajaxAlpha.send(JSON.stringify(alpha));
+    let body = new Body();
+    body.addDataUnit(new SimpleTextDataUnit("123456789"));
+    body.addDataUnit(new FileDataUnit(null));
+    let alpha = new Alpha(1, new SimpleUserEndpoint("用户名"), new SimpleUserEndpoint("目标用户", "密码"),
+        REQUEST_TYPE, SEND_MESSAGE, HTTP_PROTOCOl, body);
+    //console.info(JSON.stringify(alpha));
+    // ajaxAlpha.send(JSON.stringify(alpha));
     //获取文件,虚拟表单技术
     let formEl = document.getElementById("mainForm");
-    console.info(formEl);
     let formData = new FormData(formEl);
-    formData.append("name1", "value1")
-    console.info(formData.get("file"));
-    //ajaxAlpha.send(formData);
+    formData.append("alpha", JSON.stringify(alpha));
+    // console.info(formData.get("file"));
+    ajaxAlpha.send(formData);
     // alpha.baseProtocol=WEBSOCKET_PROTOCOL;
     // wbt.sendAlpha(JSON.stringify(alpha));
 }

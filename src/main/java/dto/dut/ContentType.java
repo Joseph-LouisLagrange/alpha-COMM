@@ -4,6 +4,7 @@ package dto.dut;
  * @author 杨能
  * @create 2020/9/24
  */
+@Deprecated
 public enum ContentType {
     TEXT_PLAIN,
     TEXT_HTML,

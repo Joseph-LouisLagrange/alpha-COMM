@@ -12,14 +12,30 @@ import java.util.List;
  * @author 杨能
  * @create 2020/9/19
  */
-public abstract class AlphaRepository implements Serializable , Cloneable{
-    public enum Category{
-        PRIVATE,PUBLIC
-    };
+public abstract class AlphaRepository implements Serializable, Cloneable {
+    /**
+     * 库的性质
+     */
+    public enum Category {
+        PRIVATE, PUBLIC
+    }
 
-    protected Category category=Category.PUBLIC;
+    ;
 
+    protected Category category = Category.PUBLIC;
+
+    private static long increaseId = 0;
+
+    public long nextId() {
+        return increaseId++;
+    }
+
+    /**
+     * 库的唯一id
+     */
     private long id;
+
+    public abstract Endpoint getHost();
 
     public abstract AlphaRepository clone();
 
@@ -27,28 +43,30 @@ public abstract class AlphaRepository implements Serializable , Cloneable{
 
     public abstract List<Alpha> getAlphasByDataType(DataType dataType);
 
-    public abstract List<Alpha> getAlphasByDataTypeAndAction(DataType dataType , Action action);
+    public abstract List<Alpha> getAlphasByDataTypeAndAction(DataType dataType, Action action);
 
     public abstract List<Alpha> getAlphasByTo(Endpoint to);
 
     public abstract List<Alpha> getAlphasByFrom(Endpoint from);
 
-    public Category getCategory(){
+    public Category getCategory() {
         return this.category;
     }
 
-    public abstract void setPrivate(Endpoint user);
-
     public abstract void addAlpha(Alpha alpha);
 
-    public abstract void removeAlpha(Endpoint from , Endpoint to);
+    public abstract void removeAlpha(Endpoint from, Endpoint to);
 
-    public long getId(){
+    public abstract void addUnreadAlpha(Alpha alpha);
+
+    public abstract void popAllUnReadAlpha(Alpha alpha);
+
+    public long getId() {
         return id;
     }
 
-    protected void setId(long id){
-        this.id=id;
+    protected void setId(long id) {
+        this.id = id;
     }
 
     @Override

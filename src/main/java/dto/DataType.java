@@ -1,5 +1,5 @@
 package dto;
 
 public enum DataType {
-    REQUEST,RESPONSE
+    REQUEST, RESPONSE, ADVICE
 }
