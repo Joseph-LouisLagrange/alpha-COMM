@@ -1,5 +1,7 @@
 package dao;
 
+import dao.repository.AlphaRepository;
+import dto.Alpha;
 import dto.endpoint.Endpoint;
 
 import java.util.ArrayList;
@@ -16,11 +18,26 @@ public class InMemoryCenterRepository implements CenterRepository {
     private static final InMemoryCenterRepository IN_MEMORY_CENTER_REPOSITORY = new InMemoryCenterRepository();
 
     private InMemoryCenterRepository() {
-    }
 
+    }
 
     public static InMemoryCenterRepository getInstance() {
         return IN_MEMORY_CENTER_REPOSITORY;
+    }
+
+    @Override
+    public void registerUser(Endpoint user) {
+
+    }
+
+    @Override
+    public void addAlphaRepositoryOfPrivate(Endpoint user1, Endpoint user2) {
+
+    }
+
+    @Override
+    public void addAlphaRepositoryOfPublic(Endpoint host) {
+
     }
 
     @Override
@@ -54,7 +71,7 @@ public class InMemoryCenterRepository implements CenterRepository {
     }
 
     @Override
-    public AlphaRepository getAlphaRepositoryOfPrivateByUser(Endpoint user) {
+    public AlphaRepository getAlphaRepositoryOfPrivateByUser(Endpoint user1, Endpoint user2) {
         return null;
     }
 
@@ -64,12 +81,27 @@ public class InMemoryCenterRepository implements CenterRepository {
     }
 
     @Override
-    public void removeAlphaRepositoryOfPrivate(Endpoint user) {
+    public void removeAlphaRepositoryOfPrivate(Endpoint user1, Endpoint user2) {
 
     }
 
     @Override
     public void removeAlphaRepositoryOfPublic(long id) {
+
+    }
+
+    @Override
+    public List<Alpha> getAllUnread(Endpoint endpoint) {
+        return null;
+    }
+
+    @Override
+    public Alpha popUnreadAlpha(Endpoint endpoint, long id) {
+        return null;
+    }
+
+    @Override
+    public void addUnread(Endpoint endpoint, Alpha alpha) {
 
     }
 }

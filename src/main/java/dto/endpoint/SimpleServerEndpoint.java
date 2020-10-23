@@ -17,6 +17,6 @@ public class SimpleServerEndpoint extends Endpoint {
 
     @Override
     public String getTypeKey() {
-        return this.getClass().getSimpleName();
+        return "SimpleServerEndpoint";
     }
 }

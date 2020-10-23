@@ -14,7 +14,7 @@ import java.util.Set;
 public abstract class BroadcastService implements Service {
     protected void broadcast(Alpha alpha, Set<Endpoint> toEndpoints, AlphaNetWorker alphaNetWorker) {
         for (Endpoint endpoint : toEndpoints) {
-            Alpha newAlpha = alpha.clone();
+            Alpha newAlpha = alpha.alphaMetaClone();
             newAlpha.setTo(endpoint);
             alphaNetWorker.send(newAlpha);
         }

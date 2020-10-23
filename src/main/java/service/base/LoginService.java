@@ -1,14 +1,16 @@
 package service.base;
 
+import core.net.AlphaNetContext;
 import core.net.AlphaNetWorker;
-import dao.CenterRepository;
+import dao.UserRepository;
 import dto.Action;
 import dto.Alpha;
-import dto.alphas.GenericAlpha;
+import dto.alphaUtil.GenericAlpha;
 import dto.dut.DataUnit;
 import dto.dut.safe.BasicAuthenticateDataUnit;
 import dto.endpoint.Endpoint;
 import dto.endpoint.SimpleServerEndpoint;
+import dto.endpoint.SimpleUserEndpoint;
 import service.HandleRequestService;
 
 import java.util.List;
@@ -19,10 +21,9 @@ import java.util.List;
  */
 public class LoginService extends HandleRequestService {
 
-    protected CenterRepository centerRepository;
-
-    public LoginService(CenterRepository centerRepository) {
-        this.centerRepository = centerRepository;
+    private UserRepository userRepository=null;
+    public LoginService(UserRepository userRepository){
+        this.userRepository=userRepository;
     }
 
     @Override
@@ -31,15 +32,23 @@ public class LoginService extends HandleRequestService {
     }
 
     @Override
-    public void run(Alpha alpha, AlphaNetWorker alphaNetWorker) {
-        Endpoint endpointFrom = alpha.getFrom();
-        List<DataUnit> dataUnitList = alpha.getBody().getDataUnitList();
-        if (dataUnitList.size() != 1 || (!(dataUnitList.get(0) instanceof BasicAuthenticateDataUnit))) {
-            Alpha backAlpha = GenericAlpha.ErrorAlpha(alpha.getId(), new SimpleServerEndpoint(), "未提供认证信息", endpointFrom, alpha.getBaseProtocol());
-            alphaNetWorker.send(backAlpha);
+    public void run(AlphaNetContext ctx , Alpha alpha, AlphaNetWorker alphaNetWorker) {
+        Endpoint endpointFrom = null;
+        List<DataUnit> dataUnitList = alpha.getBody();
+        Alpha backAlpha=null;
+        if (dataUnitList.size()<1) {
+            backAlpha = GenericAlpha.formatErrorResponseAlpha(alpha,alphaNetWorker.toJson(alpha));
         } else {
             BasicAuthenticateDataUnit basicAuthenticateDataUnit = (BasicAuthenticateDataUnit) dataUnitList.get(0);
-
+            if(this.userRepository.login(basicAuthenticateDataUnit)){
+                 backAlpha=GenericAlpha.successResponseAlpha(alpha);
+                 Endpoint endpoint=new SimpleUserEndpoint(basicAuthenticateDataUnit.getUserName());
+                 backAlpha.setTo(endpoint);
+                 alphaNetWorker.accessService(ctx.getSocketAddress(),endpoint);
+            }else{
+                 backAlpha=GenericAlpha.failResponseAlpha(alpha,"[登陆失败]");
+            }
         }
+        alphaNetWorker.send(backAlpha,ctx.getSocketAddress());
     }
 }

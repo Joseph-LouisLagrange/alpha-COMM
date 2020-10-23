@@ -9,6 +9,7 @@ import dto.DataType;
 import dto.json.AlphaJsonConverter;
 import tool.ReflectUtil;
 
+import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,15 +55,15 @@ public abstract class AlphaServer implements Registrar, AlphaNetWorker {
                 .collect(Collectors.toList());
     }
 
-    public void callService(Alpha alpha) {
-        List<Service> serviceList = getServices(alpha);
-        for (Service service : serviceList) {
-            service.run(alpha, this);
-        }
-    }
+    public abstract void callService(Alpha alpha, SocketAddress socketAddress) ;
 
     public abstract void start();
 
+
+    @Override
+    public String toJson(Alpha alpha) {
+        return this.alphaJsonConverter.toJson(alpha);
+    }
 
     @Override
     public void registerAlphaJsonConverter(AlphaJsonConverter alphaJsonConverter) {

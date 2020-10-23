@@ -1,6 +1,7 @@
 package core.net.netty;
 
 import config.ServerProperties;
+import core.net.AlphaNettyNetContext;
 import core.net.AlphaServer;
 import dto.Alpha;
 import dto.endpoint.Endpoint;
@@ -8,14 +9,11 @@ import dto.json.AlphaJsonConverter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import service.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.net.SocketAddress;
+import java.util.*;
 
 /**
  * @author 杨能
@@ -28,65 +26,82 @@ public class NettyAlphaServer extends AlphaServer {
 
     protected int workThead;
 
-    protected AlphaChatChannelInitializer nettyChannelInitializer;
+    protected AlphaChatChannelInitializer alphaChatChannelInitializer;
 
-    /**
-     * 设计这类Map理由：
-     * 1.让 ConcurrentHashMap 对抗高并发，频繁的变化
-     * 2.  accessChannelMap 来存储已认证连接
-     */
+
     //表示登陆了并且已经通过认证的channel
-    protected Map<Endpoint, Channel> accessChannelMap = new HashMap<>();
-
-    //双向map
-    protected Map<Channel, Endpoint> accessEndpointMap = new HashMap<>();
+    protected Set<Map.Entry<Endpoint,Channel>> accessSet = new HashSet<>();
 
     //表示已连接但是未认证的 channel
-    protected Map<Endpoint, Channel> activeChannelMap = new HashMap<>();
-    //表示已经激活连接的人
-    protected Set<Endpoint> activeEndpoints = new HashSet<>();
+    protected Map<SocketAddress,Channel> activeMap=new HashMap<>();
 
-    public NettyAlphaServer(ServerProperties serverProperties, AlphaJsonConverter alphaJsonConverter, AlphaChatChannelInitializer nettyChannelInitializer) {
+    /**
+     *
+     * @param serverProperties 服务端配置
+     * @param alphaJsonConverter json的转化器
+     * @param alphaChatChannelInitializer netty需要使用的 ChannelInitializer
+     */
+    public NettyAlphaServer(ServerProperties serverProperties, AlphaJsonConverter alphaJsonConverter,AlphaChatChannelInitializer alphaChatChannelInitializer) {
         super(serverProperties, alphaJsonConverter);
         bossThead = serverProperties.getBossThead();
         workThead = serverProperties.getWorkThead();
-        this.nettyChannelInitializer = nettyChannelInitializer;
+        this.alphaChatChannelInitializer = alphaChatChannelInitializer;
         //把自己的内核函数主动暴露出去
-        this.nettyChannelInitializer.setNettyAlphaServer(this);
+        this.alphaChatChannelInitializer.setNettyAlphaServer(this);
     }
 
 
-    public synchronized void active(Endpoint endpoint, Channel channel) {
-        this.activeEndpoints.add(endpoint);
-        activeChannelMap.put(endpoint, channel);
+    public synchronized void active(Channel channel) {
+        this.activeMap.put(channel.remoteAddress(),channel);
     }
 
-    public boolean isActive(Endpoint endpoint) {
-        return this.activeEndpoints.contains(endpoint);
+
+    private Endpoint getEndpointByChannel(Channel channel){
+        return accessSet.stream()
+                .filter(endpointChannelEntry -> endpointChannelEntry.getValue().equals(channel))
+                .map(Map.Entry::getKey)
+                .findAny().orElse(null);
     }
 
-    @Override
-    public void accessService(Endpoint endpoint) {
-        Channel channel = activeChannelMap.get(endpoint);
-        if (endpoint != null) {
-            //进去已认证表
-            accessChannelMap.put(endpoint, channel);
-            accessEndpointMap.put(channel, endpoint);
-        }
+    private Channel getChannelByEndpoint(Endpoint endpoint){
+        return accessSet.stream()
+                .filter(endpointChannelEntry -> endpointChannelEntry.getKey().equals(endpoint))
+                .map(Map.Entry::getValue)
+                .findAny().orElse(null);
     }
 
     @Override
     public void exit(Endpoint endpoint) {
-        Channel channel = accessChannelMap.get(endpoint);
-        accessEndpointMap.remove(channel);
-        accessChannelMap.remove(endpoint);
+        accessSet.stream()
+                .filter(endpointChannelEntry -> endpointChannelEntry.getKey().equals(endpoint))
+                .findAny().ifPresent(entry -> accessSet.remove(entry));
+    }
+
+    @Override
+    public void exit(SocketAddress socketAddress) {
+        activeMap.remove(socketAddress);
+    }
+
+    @Override
+    public boolean isAccess(Endpoint endpoint) {
+        Channel channel=getChannelByEndpoint(endpoint);
+        return channel!=null;
+    }
+
+    @Override
+    public boolean isAccess(SocketAddress socketAddress) {
+        Channel channel=this.activeMap.get(socketAddress);
+        if(channel!=null){
+            Endpoint endpoint=getEndpointByChannel(channel);
+            return endpoint!=null;
+        }
+        return false;
     }
 
 
     public Endpoint getEndpoint(Channel channel) {
-        return accessEndpointMap.get(channel);
+        return getEndpointByChannel(channel);
     }
-
 
     private void startNettyServer() {
         /* 主从线程组模型
@@ -99,7 +114,7 @@ public class NettyAlphaServer extends AlphaServer {
                     .option(ChannelOption.SO_BACKLOG, 200)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(this.nettyChannelInitializer);
+                    .childHandler(this.alphaChatChannelInitializer);
             ChannelFuture channelFuture = serverBootstrap.bind(super.ip, super.port).sync();
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
@@ -107,6 +122,15 @@ public class NettyAlphaServer extends AlphaServer {
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();//优雅的关闭主从线程池
+        }
+    }
+
+    @Override
+    public void callService(Alpha alpha, SocketAddress socketAddress) {
+        List<Service> serviceList = getServices(alpha);
+        for (Service service : serviceList) {
+            Channel channel=this.activeMap.get(socketAddress);
+            service.run(new AlphaNettyNetContext(channel) ,alpha, this);
         }
     }
 
@@ -120,6 +144,23 @@ public class NettyAlphaServer extends AlphaServer {
     public void send(Alpha alpha) {
         //获取目标对象
         Endpoint target = alpha.getTo();
-        activeChannelMap.get(target).writeAndFlush(alpha);
+        Channel targetChannel=getChannelByEndpoint(target);
+        targetChannel.writeAndFlush(alpha);
+    }
+
+    @Override
+    public void send(Alpha alpha, SocketAddress socketAddress) {
+        Channel channel=this.activeMap.get(socketAddress);
+        if(channel!=null){
+            channel.writeAndFlush(alpha);
+        }
+    }
+
+    @Override
+    public void accessService(SocketAddress socketAddress , Endpoint user) {
+        //可接近服务器
+        Channel channel=activeMap.get(socketAddress);
+        AbstractMap.SimpleEntry<Endpoint,Channel> entry=new AbstractMap.SimpleEntry<Endpoint,Channel>(user,channel);
+        accessSet.add(entry);
     }
 }

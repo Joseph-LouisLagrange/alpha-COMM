@@ -3,6 +3,10 @@ package core.net;
 import dto.Alpha;
 import dto.dut.safe.BasicAuthenticateDataUnit;
 import dto.endpoint.Endpoint;
+import io.netty.channel.Channel;
+
+import java.net.SocketAddress;
+import java.nio.channels.SocketChannel;
 
 /**
  * @author 杨能
@@ -17,12 +21,16 @@ public interface AlphaNetWorker {
      */
     public void send(Alpha alpha);
 
+
+    public void send(Alpha alpha, SocketAddress socketAddress);
+
     /**
-     * 允许服务器为 endpoint 提供服务
+     * 对这个SocketAddress提供合法的服务
      *
-     * @param endpoint 源
+     * @param socketAddress 源 SocketAddress
      */
-    public void accessService(Endpoint endpoint);
+    public void accessService(SocketAddress socketAddress , Endpoint user);
+
 
     /**
      * 退出服务器 ，不能使用服务器功能
@@ -30,4 +38,24 @@ public interface AlphaNetWorker {
      * @param endpoint 源
      */
     public void exit(Endpoint endpoint);
+
+
+    public void exit(SocketAddress socketAddress);
+
+    /**
+     * json化
+     * @param alpha 数据包
+     * @return json
+     */
+    public String toJson(Alpha alpha);
+
+    /**
+     * 判断连接通道
+     * @param endpoint 目标
+     * @return true|false
+     */
+    public boolean isAccess(Endpoint endpoint);
+
+
+    public boolean isAccess(SocketAddress socketAddress);
 }

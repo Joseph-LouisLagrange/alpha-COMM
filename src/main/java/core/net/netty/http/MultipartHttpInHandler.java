@@ -55,7 +55,7 @@ public class MultipartHttpInHandler extends SimpleChannelInboundHandler<Object> 
             }
         }
         //把零时文件放入alpha包中
-        List<DataUnit> dataUnitList = alpha.getBody().getDataUnitList();
+        List<DataUnit> dataUnitList = alpha.getBody();
         List<Integer> index = new ArrayList<>();
         for (int i = 0; i < dataUnitList.size(); i++) {
             if (dataUnitList.get(i) instanceof FileDataUnit) {

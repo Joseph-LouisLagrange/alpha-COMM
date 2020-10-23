@@ -43,4 +43,11 @@ public class SimpleUserEndpoint extends Endpoint {
     public String getTypeKey() {
         return this.getClass().getSimpleName();
     }
+
+    @Override
+    public String toString() {
+        return "SimpleUserEndpoint{" +
+                "userName='" + userName + '\'' +
+                '}';
+    }
 }

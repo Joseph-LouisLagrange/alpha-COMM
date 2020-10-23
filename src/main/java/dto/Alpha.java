@@ -1,31 +1,39 @@
 package dto;
 
+import dto.dut.DataUnit;
 import dto.endpoint.Endpoint;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Alpha implements Cloneable {
+public class Alpha implements Cloneable , Serializable {
     Long id;
     Endpoint from;
     Endpoint to;
     DataType dataType;
     Action action;
-    LocalDateTime date;
+    LocalDateTime dateTime;
     BaseProtocol baseProtocol;
-    Body body;
+    List<DataUnit> body=new ArrayList<>();
 
-    public Alpha(Long id, Endpoint from, Endpoint to, DataType dataType, Action action, BaseProtocol baseProtocol, Body body) {
+    public Alpha(Long id, Endpoint from, Endpoint to, DataType dataType, Action action, BaseProtocol baseProtocol, List<DataUnit> body) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.dataType = dataType;
         this.action = action;
-        this.date = LocalDateTime.now();
+        this.dateTime = LocalDateTime.now();
         this.baseProtocol = baseProtocol;
         this.body = body;
     }
 
     public Alpha() {
+    }
+
+    public Alpha(long id){
+        this.setId(id);
     }
 
     public Long getId() {
@@ -68,19 +76,19 @@ public class Alpha implements Cloneable {
         this.action = action;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public Body getBody() {
+    public List<DataUnit> getBody() {
         return body;
     }
 
-    public void setBody(Body body) {
+    public void setBody(List<DataUnit> body) {
         this.body = body;
     }
 
@@ -92,6 +100,10 @@ public class Alpha implements Cloneable {
         this.baseProtocol = baseProtocol;
     }
 
+    public void addDataUnit(DataUnit dataUnit){
+        this.body.add(dataUnit);
+    }
+
     @Override
     public String toString() {
         return "Alpha{" +
@@ -100,7 +112,7 @@ public class Alpha implements Cloneable {
                 ", to=" + to +
                 ", dataType=" + dataType +
                 ", action=" + action +
-                ", date=" + date +
+                ", date=" + dateTime +
                 ", baseProtocol=" + baseProtocol +
                 ", body=" + body +
                 '}';
@@ -108,11 +120,21 @@ public class Alpha implements Cloneable {
 
     @Override
     public Alpha clone() {
-        try {
-            return (Alpha) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Alpha alpha=new Alpha();
+        alpha.setBody(new ArrayList<>(this.getBody()));
+        alpha.setDateTime(this.dateTime);
+        alpha.setFrom(this.from);
+        alpha.setAction(this.action);
+        alpha.setDataType(this.dataType);
+        alpha.setId(this.id);
+        alpha.setTo(this.to);
+        alpha.setBaseProtocol(this.baseProtocol);
+        return alpha;
+    }
+
+    public Alpha alphaMetaClone(){
+        Alpha alpha=this.clone();
+        alpha.getBody().clear();
+        return alpha;
     }
 }

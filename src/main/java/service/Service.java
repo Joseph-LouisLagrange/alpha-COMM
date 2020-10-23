@@ -1,5 +1,6 @@
 package service;
 
+import core.net.AlphaNetContext;
 import core.net.AlphaNetWorker;
 import dto.Alpha;
 
@@ -10,5 +11,5 @@ import dto.Alpha;
 public interface Service {
     public boolean isSupport(Alpha alpha);
 
-    public void run(Alpha alpha, AlphaNetWorker alphaNetWorker);
+    public void run(AlphaNetContext ctx , Alpha alpha, AlphaNetWorker alphaNetWorker);
 }

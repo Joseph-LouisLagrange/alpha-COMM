@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <script src="alphaWBT.js"></script>-->
+<!--    <script src="alphaAjax.js"></script>-->
+<!--    <script src="alphaChat.js"></script>-->
+    <script src="layim.js"></script>
+</head>
+<body>
+    <label>用户名:</label><input type="text" id="userName"/>
+    <label>密码:</label><input type="text" id="password"/>
+    <button onclick="login()">登陆</button>
+    <button onclick="register()">注册</button>
+<script>
+    function register(){
+        let userName = document.getElementById("userName").value;
+        let password = document.getElementById("password").value;
+        basicRegister(userName,password);
+    }
+
+    function login() {
+        let userName = document.getElementById("userName").value;
+        let password = document.getElementById("password").value;
+        basicLogin(userName,password);
+    }
+</script>
+</body>
+</html>

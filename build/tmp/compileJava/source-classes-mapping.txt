@@ -12,18 +12,20 @@ service/HandleRequestService.java
  service.HandleRequestService
 dto/dut/safe/BasicAuthenticateDataUnit.java
  dto.dut.safe.BasicAuthenticateDataUnit
-service/SendMessageService.java
- service.SendMessageService
-dto/dut/comm/SimpleTextDataUnit.java
- dto.dut.comm.SimpleTextDataUnit
+dto/alphaUtil/GenericAlpha.java
+ dto.alphaUtil.GenericAlpha
+core/net/netty/alpha/AlphaInHandler.java
+ core.net.netty.alpha.AlphaInHandler
+dao/repository/PrivateAlphaRepository.java
+ dao.repository.PrivateAlphaRepository
 core/net/AlphaNetWorker.java
  core.net.AlphaNetWorker
 core/net/AlphaServer.java
  core.net.AlphaServer
+dto/dut/AdviceDataUnit.java
+ dto.dut.AdviceDataUnit
 dto/MimeTypeData.java
  dto.MimeTypeData
-dto/alphas/GenericAlpha.java
- dto.alphas.GenericAlpha
 dto/endpoint/DefaultEndpointTable.java
  dto.endpoint.DefaultEndpointTable
 core/net/netty/http/SimpleHttpInHandler.java
@@ -32,6 +34,10 @@ dao/InMemoryCenterRepository.java
  dao.InMemoryCenterRepository
 dto/dut/comm/PhizDataUnit.java
  dto.dut.comm.PhizDataUnit
+service/power/OnlineBroadcastService.java
+ service.power.OnlineBroadcastService
+dto/dut/datatype/ResponseDataUnit.java
+ dto.dut.datatype.ResponseDataUnit
 dto/dut/comm/ImageDataUnit.java
  dto.dut.comm.ImageDataUnit
 dto/json/DataUnitAdapter.java
@@ -42,8 +48,8 @@ aop/SimpleAop.java
  aop.SimpleAop
 core/net/netty/WebSocket/SimpleWebSocketOutHandler.java
  core.net.netty.WebSocket.SimpleWebSocketOutHandler
-dao/PrivateAlphaRepository.java
- dao.PrivateAlphaRepository
+dto/dut/datatype/SuccessResponseDataUnit.java
+ dto.dut.datatype.SuccessResponseDataUnit
 core/net/netty/AlphaChatHandler.java
  core.net.netty.AlphaChatHandler
 dto/Body.java
@@ -52,8 +58,8 @@ service/base/SendMessageService.java
  service.base.SendMessageService
 dto/endpoint/SimpleUserEndpoint.java
  dto.endpoint.SimpleUserEndpoint
-dto/dut/action/AdviceDataUnit.java
- dto.dut.action.AdviceDataUnit
+dto/dut/datatype/ErrorResponseDataUnit.java
+ dto.dut.datatype.ErrorResponseDataUnit
 dto/Action.java
  dto.Action
 core/net/netty/http/MultipartHttpInHandler.java
@@ -64,10 +70,17 @@ service/base/LoginService.java
  service.base.LoginService
 core/net/netty/WebSocket/SimpleWebSocketInHandler.java
  core.net.netty.WebSocket.SimpleWebSocketInHandler
+dto/endpoint/AnonymousUserEndpoint.java
+ dto.endpoint.AnonymousUserEndpoint
+service/power/OfflineBroadcastService.java
+ service.power.OfflineBroadcastService
 dto/dut/advance/GroupInfDataUnit.java
  dto.dut.advance.GroupInfDataUnit
-service/base/SimpleSendMessageService.java
- service.base.SimpleSendMessageService
+dao/repository/AlphaRepository.java
+ dao.repository.AlphaRepository
+ dao.repository.AlphaRepository$Category
+dto/dut/datatype/FailResponseDataUnit.java
+ dto.dut.datatype.FailResponseDataUnit
 dto/endpoint/Endpoint.java
  dto.endpoint.Endpoint
 core/net/netty/BaseInHandler.java
@@ -84,10 +97,10 @@ dto/dut/advance/UserInfDataUnit.java
  dto.dut.advance.UserInfDataUnit
 dto/json/gson/AlphaGsonConverter.java
  dto.json.gson.AlphaGsonConverter
+service/power/BroadcastService.java
+ service.power.BroadcastService
 dto/dut/comm/FileDataUnit.java
  dto.dut.comm.FileDataUnit
-dao/FastAlphaRepositoryFactory.java
- dao.FastAlphaRepositoryFactory
 dto/endpoint/SimpleServerEndpoint.java
  dto.endpoint.SimpleServerEndpoint
 dto/json/gson/GsonAdapter.java
@@ -97,41 +110,50 @@ core/net/netty/http/HttpUploadServerHandler.java
 config/ServerProperties.java
  config.ServerProperties
  config.ServerProperties$NettyProperties
-core/net/netty/EndOutHandler.java
- core.net.netty.EndOutHandler
+core/net/netty/AlphaChatChannelInitializer.java
+ core.net.netty.AlphaChatChannelInitializer
 core/net/netty/BaseOutHandler.java
  core.net.netty.BaseOutHandler
 core/net/netty/alpha/AlphaCenter.java
  core.net.netty.alpha.AlphaCenter
+dao/repository/PublicAlphaRepository.java
+ dao.repository.PublicAlphaRepository
+dao/InMemoryUserRepository.java
+ dao.InMemoryUserRepository
 dto/json/EndpointAdapter.java
  dto.json.EndpointAdapter
 dto/Alpha.java
  dto.Alpha
+dao/CacheStorage.java
+ dao.CacheStorage
 dao/CenterRepository.java
  dao.CenterRepository
+dao/UserRepository.java
+ dao.UserRepository
+core/net/AlphaNetContext.java
+ core.net.AlphaNetContext
 service/HandleResponseService.java
  service.HandleResponseService
+core/net/netty/AlphaChatHttp_WSChannelInitializer.java
+ core.net.netty.AlphaChatHttp_WSChannelInitializer
 dto/BaseProtocol.java
  dto.BaseProtocol
 aop/AopTest.java
  aop.AopTest
-dao/PublicAlphaRepository.java
- dao.PublicAlphaRepository
 core/net/netty/alpha/AlphaOutHandler.java
  core.net.netty.alpha.AlphaOutHandler
-dao/AlphaRepository.java
- dao.AlphaRepository
- dao.AlphaRepository$Category
 dto/json/gson/DefaultGsonAdapter.java
  dto.json.gson.DefaultGsonAdapter
-dao/AlphaRepositoryFactory.java
- dao.AlphaRepositoryFactory
-service/DayinService.java
- service.DayinService
+core/net/AlphaNettyNetContext.java
+ core.net.AlphaNettyNetContext
 core/net/netty/FirstInHandler.java
  core.net.netty.FirstInHandler
+service/base/RegisterService.java
+ service.base.RegisterService
 core/net/netty/NettyAlphaServer.java
  core.net.netty.NettyAlphaServer
+core/net/netty/TcpAlphaChatChannelInitializer.java
+ core.net.netty.TcpAlphaChatChannelInitializer
 dto/endpoint/SimpleGroupEndpoint.java
  dto.endpoint.SimpleGroupEndpoint
 tool/AlphaUtil.java
@@ -150,13 +172,15 @@ aop/HandleRequestServiceAop.java
  aop.HandleRequestServiceAop
 dto/dut/comm/FileAttributes.java
  dto.dut.comm.FileAttributes
+service/base/ConfirmMessageService.java
+ service.base.ConfirmMessageService
 service/WebSocketService.java
  service.WebSocketService
 core/net/netty/http/SimpleHttpOutHandler.java
  core.net.netty.http.SimpleHttpOutHandler
 dto/fast/BodyBuilder.java
  dto.fast.BodyBuilder
-core/net/netty/alpha/AlphaInHandler.java
- core.net.netty.alpha.AlphaInHandler
-core/net/netty/AlphaChatChannelInitializer.java
- core.net.netty.AlphaChatChannelInitializer
+core/net/netty/EndOutHandler.java
+ core.net.netty.EndOutHandler
+dto/dut/comm/SimpleTextDataUnit.java
+ dto.dut.comm.SimpleTextDataUnit

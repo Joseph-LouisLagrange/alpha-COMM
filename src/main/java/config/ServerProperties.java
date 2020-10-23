@@ -25,8 +25,8 @@ public class ServerProperties {
 
     static class NettyProperties {
         int bossThead = 1;
-        int workThead = Runtime.getRuntime().availableProcessors() * 2;
-
+        //int workThead = Runtime.getRuntime().availableProcessors() * 2;
+        int workThead=1;
         public int getBossThead() {
             return bossThead;
         }
